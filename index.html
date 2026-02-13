@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/output.css" />
+    <title>Đếm Ngược Tết Nguyên Đán</title>
+    <style>
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      /* Fireworks styles */
+      .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        animation: explode 1.5s ease-out infinite;
+      }
+
+      @keyframes explode {
+        0% {
+          transform: translate(0, 0);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--x), var(--y));
+          opacity: 0;
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .pulse-animation {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(100px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .slide-up {
+        animation: slideUp 1s ease-out;
+      }
+
+      #celebrationScreen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+      }
+
+      #celebrationScreen.active {
+        display: flex;
+      }
+
+      .message-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .message-icon {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 768px) {
+        .message-icon {
+          width: 30px;
+          height: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="flex justify-center items-center bg-linear-to-br from-[#2D0B0B] via-[#6F0D0D] to-[#4d1414] p-4 min-h-screen"
+  >
+    <!-- Celebration Screen -->
+    <div
+      id="celebrationScreen"
+      class="justify-center items-center bg-[url('https://baobiasia.com/wp-content/uploads/2025/12/background-tet-co-dien-10.jpg')] bg-cover bg-center"
+    >
+      <div
+        id="fireworksContainer"
+        class="absolute inset-0 overflow-hidden"
+      ></div>
+
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <div class="z-10 relative px-4 w-full max-w-4xl text-center">
+        <div
+          class="bg-white/10 shadow-2xl backdrop-blur-md p-8 md:p-12 rounded-3xl slide-up"
+        >
+          <div class="flex justify-center items-center mb-6">
+            <img
+              width="50"
+              height="50"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+            <h1
+              class="drop-shadow-2xl mx-4 font-bold text-yellow-300 text-4xl md:text-4xl pulse-animation"
+            >
+              &nbsp;CHÚC MỪNG NĂM MỚI&nbsp;
+            </h1>
+            <img
+              width="50"
+              height="50"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+          </div>
+
+          <h2
+            class="drop-shadow-xl mb-8 font-bold text-[#FBC02D] text-2xl md:text-3xl"
+            id="celebrationYear"
+          >
+            Tết Ất Tỵ 2026
+          </h2>
+
+          <div class="bg-white/20 backdrop-blur-sm mb-8 p-6 rounded-2xl">
+            <div class="space-y-4 text-2xl md:text-4xl">
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="35"
+                  height="35"
+                  src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                  alt="external-red-envelope-china-wanicon-flat-wanicon"
+                />
+                <p class="drop-shadow-lg font-semibold text-yellow-200">
+                  Vạn Sự Như Ý
+                </p>
+                <img
+                  width="35"
+                  height="35"
+                  src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                  alt="external-red-envelope-china-wanicon-flat-wanicon"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="50"
+                  height="50"
+                  src="https://img.icons8.com/emoji/48/vietnam-emoji.png"
+                  alt="vietnam-emoji"
+                />
+                <p class="drop-shadow-lg font-semibold text-white">
+                  An Khang Thịnh Vượng
+                </p>
+                <img
+                  width="50"
+                  height="50"
+                  src="https://img.icons8.com/emoji/48/vietnam-emoji.png"
+                  alt="vietnam-emoji"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="45"
+                  height="45"
+                  src="https://img.icons8.com/fluency/48/celebrate.png"
+                  alt="celebrate"
+                />
+                <p class="drop-shadow-lg font-semibold text-yellow-300">
+                  Phúc Lộc Dồi Dào
+                </p>
+                <img
+                  width="45"
+                  height="45"
+                  src="https://img.icons8.com/fluency/48/celebrate.png"
+                  alt="celebrate"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            onclick="closeCelebration()"
+            class="bg-white hover:bg-yellow-200 shadow-2xl px-8 py-4 rounded-full font-bold text-red-600 text-xl hover:scale-105 transition-all duration-300 transform"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full max-w-4xl">
+      <!-- Header -->
+      <div class="mb-8 text-center fade-in">
+        <div class="flex justify-center items-center">
+          <img
+            width="50"
+            height="50"
+            src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+            alt="firework-explosion--v1"
+          />
+          <h1
+            class="drop-shadow-lg font-bold text-[#FBC02D] text-5xl md:text-5xl"
+            id="headerTitle"
+          >
+            &nbsp;Tết Nguyên Đán 2026&nbsp;
+          </h1>
+          <img
+            width="50"
+            height="50"
+            src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+            alt="firework-explosion--v1"
+          />
+        </div>
+      </div>
+
+      <!-- Countdown Container -->
+      <div
+        class="bg-[url('https://baobiasia.com/wp-content/uploads/2025/12/background-tet-co-dien-10.jpg')] bg-cover bg-center shadow-2xl backdrop-blur-sm p-8 md:p-12 rounded-3xl fade-in"
+      >
+        <div class="gap-4 md:gap-6 grid grid-cols-2 md:grid-cols-4 mb-8">
+          <!-- Days -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="days"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Ngày</div>
+          </div>
+
+          <!-- Hours -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="hours"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Giờ</div>
+          </div>
+
+          <!-- Minutes -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="minutes"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Phút</div>
+          </div>
+
+          <!-- Seconds -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="seconds"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Giây</div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="text-center">
+          <div class="float-animation mb-4 message-container">
+            <img
+              width="40"
+              height="40"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+            <p
+              class="font-bold text-[#FAF5F4] text-2xl md:text-3xl"
+              id="message"
+            >
+              Đang đếm ngược...
+            </p>
+            <img
+              width="40"
+              height="40"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+          </div>
+          <div class="flex justify-center gap-4 text-4xl">
+            <span class="float-animation" style="animation-delay: 0s"
+              ><img
+                width="35"
+                height="35"
+                src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                alt="external-red-envelope-china-wanicon-flat-wanicon"
+            /></span>
+            <span class="float-animation" style="animation-delay: 0.2s"
+              ><img
+                width="35"
+                height="35"
+                src="https://img.icons8.com/fluency/48/celebrate.png"
+                alt="celebrate"
+            /></span>
+            <span
+              class="float-animation text-[30px]"
+              style="animation-delay: 0.4s"
+              id="zodiacIcon"
+              >🐍</span
+            >
+            <span class="float-animation" style="animation-delay: 0.6s"
+              ><img
+                width="35"
+                height="35"
+                src="https://img.icons8.com/fluency/48/celebrate.png"
+                alt="celebrate"
+            /></span>
+            <span class="float-animation" style="animation-delay: 0.8s"
+              ><img
+                width="35"
+                height="35"
+                src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                alt="external-red-envelope-china-wanicon-flat-wanicon"
+            /></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>

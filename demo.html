@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="src/output.css" />
+    <title>Demo & Test - Đếm Ngược Tết</title>
+    <style>
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+      .float-animation {
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      /* Fireworks styles */
+      .firework {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        animation: explode 1.5s ease-out infinite;
+      }
+
+      @keyframes explode {
+        0% {
+          transform: translate(0, 0);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--x), var(--y));
+          opacity: 0;
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .pulse-animation {
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(100px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .slide-up {
+        animation: slideUp 1s ease-out;
+      }
+
+      #celebrationScreen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+      }
+
+      #celebrationScreen.active {
+        display: flex;
+      }
+
+      .message-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .message-icon {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+      }
+
+      @media (max-width: 768px) {
+        .message-icon {
+          width: 30px;
+          height: 30px;
+        }
+      }
+
+      /* Test Panel Styles */
+      #testPanel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px;
+        border-radius: 15px;
+        color: white;
+        max-width: 350px;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 10000;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      #testPanel h3 {
+        margin: 0 0 15px 0;
+        color: #ffd700;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .test-button {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        margin: 5px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .test-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .test-button.active {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .test-button.reset {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        margin-top: 15px;
+      }
+
+      .test-info {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+        font-size: 12px;
+      }
+
+      .toggle-panel {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 15px 20px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        z-index: 10001;
+      }
+
+      .toggle-panel:hover {
+        background: #764ba2;
+      }
+
+      #testPanel.hidden {
+        display: none;
+      }
+
+      .scenario-group {
+        margin: 15px 0;
+      }
+
+      .scenario-group-title {
+        color: #ffd700;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 10px 0 5px 0;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body
+    class="flex justify-center items-center bg-linear-to-br from-[#2D0B0B] via-[#6F0D0D] to-[#4d1414] p-4 min-h-screen"
+  >
+    <!-- Test Panel -->
+    <div id="testPanel">
+      <h3>🧪 Test Panel</h3>
+
+      <div class="test-info">
+        <strong>Scenario hiện tại:</strong><br />
+        <span id="currentScenario">Normal Mode</span>
+      </div>
+
+      <div class="scenario-group">
+        <div class="scenario-group-title">📅 Thời gian dài</div>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_100_DAYS')"
+        >
+          Còn 120 ngày
+        </button>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_80_DAYS')"
+        >
+          Còn 80 ngày
+        </button>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_45_DAYS')"
+        >
+          Còn 45 ngày
+        </button>
+      </div>
+
+      <div class="scenario-group">
+        <div class="scenario-group-title">📆 Gần Tết</div>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_15_DAYS')"
+        >
+          Còn 15 ngày
+        </button>
+        <button class="test-button" onclick="testScenario('BEFORE_TET_3_DAYS')">
+          Còn 3 ngày
+        </button>
+        <button class="test-button" onclick="testScenario('BEFORE_TET_1_DAY')">
+          Còn 1 ngày
+        </button>
+      </div>
+
+      <div class="scenario-group">
+        <div class="scenario-group-title">⏰ Sắp đến Tết</div>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_5_HOURS')"
+        >
+          Còn 5 giờ
+        </button>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_30_MINUTES')"
+        >
+          Còn 30 phút
+        </button>
+        <button
+          class="test-button"
+          onclick="testScenario('BEFORE_TET_30_SECONDS')"
+        >
+          Còn 30 giây
+        </button>
+      </div>
+
+      <div class="scenario-group">
+        <div class="scenario-group-title">🎊 Tết & Sau Tết</div>
+        <button class="test-button" onclick="testScenario('TET_TIME')">
+          Đúng lúc Tết
+        </button>
+        <button class="test-button" onclick="testScenario('AFTER_TET')">
+          Sau Tết
+        </button>
+      </div>
+
+      <button class="test-button reset" onclick="resetTest()">
+        🔄 Reset về thời gian thực
+      </button>
+
+      <div class="scenario-group">
+        <div class="scenario-group-title">🎆 Actions</div>
+        <button class="test-button" onclick="showCelebration()">
+          Xem màn hình chúc mừng
+        </button>
+        <button class="test-button" onclick="closeCelebration()">
+          Đóng màn hình chúc mừng
+        </button>
+      </div>
+    </div>
+
+    <button class="toggle-panel" onclick="toggleTestPanel()">
+      🧪 Test Panel
+    </button>
+
+    <!-- Celebration Screen -->
+    <div
+      id="celebrationScreen"
+      class="justify-center items-center bg-[url('https://baobiasia.com/wp-content/uploads/2025/12/background-tet-co-dien-10.jpg')] bg-cover bg-center"
+    >
+      <div
+        id="fireworksContainer"
+        class="absolute inset-0 overflow-hidden"
+      ></div>
+
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <div class="z-10 relative px-4 w-full max-w-4xl text-center">
+        <div
+          class="bg-white/10 shadow-2xl backdrop-blur-md p-8 md:p-12 rounded-3xl slide-up"
+        >
+          <div class="flex justify-center items-center mb-6">
+            <img
+              width="50"
+              height="50"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+            <h1
+              class="drop-shadow-2xl mx-4 font-bold text-yellow-300 text-4xl md:text-4xl pulse-animation"
+            >
+              &nbsp;CHÚC MỪNG NĂM MỚI&nbsp;
+            </h1>
+            <img
+              width="50"
+              height="50"
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="firework"
+              class="pulse-animation"
+            />
+          </div>
+
+          <h2
+            class="drop-shadow-xl mb-8 font-bold text-[#FBC02D] text-2xl md:text-3xl"
+            id="celebrationYear"
+          >
+            Tết Ất Tỵ 2026
+          </h2>
+
+          <div class="bg-white/20 backdrop-blur-sm mb-8 p-6 rounded-2xl">
+            <div class="space-y-4 text-2xl md:text-4xl">
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="35"
+                  height="35"
+                  src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                  alt="external-red-envelope-china-wanicon-flat-wanicon"
+                />
+                <p class="drop-shadow-lg font-semibold text-yellow-200">
+                  Vạn Sự Như Ý
+                </p>
+                <img
+                  width="35"
+                  height="35"
+                  src="https://img.icons8.com/external-wanicon-flat-wanicon/64/external-red-envelope-china-wanicon-flat-wanicon.png"
+                  alt="external-red-envelope-china-wanicon-flat-wanicon"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="50"
+                  height="50"
+                  src="https://img.icons8.com/emoji/48/vietnam-emoji.png"
+                  alt="vietnam-emoji"
+                />
+                <p class="drop-shadow-lg font-semibold text-white">
+                  An Khang Thịnh Vượng
+                </p>
+                <img
+                  width="50"
+                  height="50"
+                  src="https://img.icons8.com/emoji/48/vietnam-emoji.png"
+                  alt="vietnam-emoji"
+                />
+              </div>
+              <div class="flex justify-center items-center gap-4">
+                <img
+                  width="45"
+                  height="45"
+                  src="https://img.icons8.com/fluency/48/celebrate.png"
+                  alt="celebrate"
+                />
+                <p class="drop-shadow-lg font-semibold text-yellow-300">
+                  Phúc Lộc Dồi Dào
+                </p>
+                <img
+                  width="45"
+                  height="45"
+                  src="https://img.icons8.com/fluency/48/celebrate.png"
+                  alt="celebrate"
+                />
+              </div>
+            </div>
+          </div>
+
+          <button
+            onclick="closeCelebration()"
+            class="bg-white hover:bg-yellow-200 shadow-2xl px-8 py-4 rounded-full font-bold text-red-600 text-xl hover:scale-105 transition-all duration-300 transform"
+          >
+            Đóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full max-w-4xl">
+      <!-- Header -->
+      <div class="mb-8 text-center fade-in">
+        <div class="flex justify-center items-center">
+          <img
+            width="50"
+            height="50"
+            src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+            alt="firework-explosion--v1"
+          />
+          <h1
+            class="drop-shadow-lg font-bold text-[#FBC02D] text-5xl md:text-5xl"
+            id="headerTitle"
+          >
+            &nbsp;Tết Nguyên Đán 2026&nbsp;
+          </h1>
+          <img
+            width="50"
+            height="50"
+            src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+            alt="firework-explosion--v1"
+          />
+        </div>
+      </div>
+
+      <!-- Countdown Container -->
+      <div
+        class="bg-[url('https://baobiasia.com/wp-content/uploads/2025/12/background-tet-co-dien-10.jpg')] bg-cover bg-center shadow-2xl backdrop-blur-sm p-8 md:p-12 rounded-3xl fade-in"
+      >
+        <div class="gap-4 md:gap-6 grid grid-cols-2 md:grid-cols-4 mb-8">
+          <!-- Days -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="days"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Ngày</div>
+          </div>
+
+          <!-- Hours -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="hours"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Giờ</div>
+          </div>
+
+          <!-- Minutes -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="minutes"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Phút</div>
+          </div>
+
+          <!-- Seconds -->
+          <div
+            class="bg-[#FAF5F4] p-6 rounded-2xl text-center hover:scale-105 transition-transform duration-300 transform"
+          >
+            <div
+              class="mb-2 font-bold text-red-500 text-5xl md:text-6xl"
+              id="seconds"
+            >
+              00
+            </div>
+            <div class="font-semibold text-black text-lg md:text-xl">Giây</div>
+          </div>
+        </div>
+
+        <!-- Message -->
+        <div class="text-center">
+          <div class="float-animation mb-4 message-container">
+            <img
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="icon"
+              class="message-icon"
+            />
+            <p
+              class="font-bold text-[#FAF5F4] text-2xl md:text-3xl"
+              id="message"
+            >
+              Đang đếm ngược...
+            </p>
+            <img
+              src="https://img.icons8.com/color/48/firework-explosion--v1.png"
+              alt="icon"
+              class="message-icon"
+            />
+          </div>
+          <div class="flex justify-center gap-4 text-4xl">
+            <span class="float-animation" style="animation-delay: 0s">🧧</span>
+            <span class="float-animation" style="animation-delay: 0.2s"
+              >🎆</span
+            >
+            <span
+              class="float-animation"
+              style="animation-delay: 0.4s"
+              id="zodiacIcon"
+              >🐍</span
+            >
+            <span class="float-animation" style="animation-delay: 0.6s"
+              >🎆</span
+            >
+            <span class="float-animation" style="animation-delay: 0.8s"
+              >🧧</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="test-helper.js"></script>
+    <script src="main.js"></script>
+    <script>
+      // Test panel functions
+      let currentTestScenario = null;
+
+      function testScenario(scenario) {
+        TEST_MODE.enabled = true;
+        TEST_MODE.scenario = scenario;
+        currentTestScenario = scenario;
+
+        // Update UI
+        document.getElementById("currentScenario").textContent =
+          TEST_SCENARIOS[scenario].description;
+
+        // Highlight active button
+        document.querySelectorAll(".test-button").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+        event.target.classList.add("active");
+
+        // Reload page
+        location.reload();
+      }
+
+      function resetTest() {
+        TEST_MODE.enabled = false;
+        currentTestScenario = null;
+        location.reload();
+      }
+
+      function toggleTestPanel() {
+        const panel = document.getElementById("testPanel");
+        panel.classList.toggle("hidden");
+      }
+
+      // Keep panel open if in test mode
+      if (TEST_MODE.enabled && currentTestScenario) {
+        document.getElementById("currentScenario").textContent =
+          TEST_SCENARIOS[TEST_MODE.scenario].description;
+      }
+    </script>
+  </body>
+</html>
